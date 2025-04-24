@@ -35,12 +35,9 @@
     "url": "https://github.com/lukebrandonfarrell/react-native-awesome-pin/issues"
   },
   "homepage": "https://github.com/lukebrandonfarrell/react-native-awesome-pin#readme",
-  "dependencies": {
-    "react-native-material-ripple": "git+https://github.com/lukebrandonfarrell/react-native-material-ripple.git"
-  },
   "peerDependencies": {
     "react": "16.2.0",
-    "react-native": "0.53.0"
+    "react-native": ">=0.64.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",

@@ -3,12 +3,12 @@
  * @description Keyboard component with error status bar and interactive keys
  */
 
-import React, { Component } from "react";
-import { View, Image, Text, StyleSheet, Platform, TouchableOpacity } from "react-native";
-import Ripple from "react-native-material-ripple";
-import PropTypes from "prop-types";
+import React, { Component } from "react"
+import { View, Image, Text, StyleSheet, Platform, TouchableOpacity } from "react-native"
+import { Pressable } from "react-native"
+import PropTypes from "prop-types"
 
-const backAsset = require("./back.png");
+const backAsset = require("./back.png")
 
 class PinKeyboard extends Component {
   /**
@@ -20,12 +20,12 @@ class PinKeyboard extends Component {
    *
    */
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       disabled: false,
       error: null
-    };
+    }
   }
 
   /**
@@ -34,7 +34,7 @@ class PinKeyboard extends Component {
    * Executed when the component is mounted to the screen.
    */
   componentDidMount() {
-    this.props.onRef(this);
+    this.props.onRef(this)
   }
 
   /**
@@ -43,7 +43,7 @@ class PinKeyboard extends Component {
    * Executed when the component is unmounted from the screen
    */
   componentWillUnmount() {
-    this.props.onRef(undefined);
+    this.props.onRef(undefined)
   }
 
   /**
@@ -53,13 +53,13 @@ class PinKeyboard extends Component {
    */
   render() {
     /** Styles */
-    const { containerStyle, keyboardDefaultStyle, keyboardRowStyle } = styles;
+    const { containerStyle, keyboardDefaultStyle, keyboardRowStyle } = styles
     /** Props */
     const {
       keyboard,
       // Style Props
       keyboardStyle
-    } = this.props;
+    } = this.props
 
     return (
       <View style={containerStyle}>
@@ -71,14 +71,14 @@ class PinKeyboard extends Component {
                 <View key={r} style={keyboardRowStyle}>
                   {// Maps each number in row and creates key for that number
                     row.map((element, k) => {
-                      return this.renderKey(element, r, k);
+                      return this.renderKey(element, r, k)
                     })}
                 </View>
-              );
+              )
             })}
         </View>
       </View>
-    );
+    )
   }
 
   /**
@@ -88,27 +88,27 @@ class PinKeyboard extends Component {
    */
   renderError() {
     // Styles
-    const { errorDefaultStyle, errorTextDefaultStyle } = styles;
+    const { errorDefaultStyle, errorTextDefaultStyle } = styles
 
     // Props
     const {
       // Style Props
       errorStyle,
       errorTextStyle
-    } = this.props;
+    } = this.props
 
     // State
-    const { error } = this.state;
+    const { error } = this.state
 
     if (error) {
       return (
         <View style={[errorDefaultStyle, errorStyle]}>
           <Text style={[errorTextDefaultStyle, errorTextStyle]}>{error}</Text>
         </View>
-      );
+      )
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -128,7 +128,7 @@ class PinKeyboard extends Component {
       keyDefaultStyle,
       keyTextDefaultStyle,
       keyImageDefaultStyle
-    } = styles;
+    } = styles
     /** Props */
     const {
       disableRippleEffect,
@@ -139,9 +139,9 @@ class PinKeyboard extends Component {
       keyStyle,
       keyTextStyle,
       keyImageStyle
-    } = this.props;
+    } = this.props
     /** State */
-    const { disabled } = this.state;
+    const { disabled } = this.state
 
     // Custom functions for the keyboard key
     const keyboardFuncSet = keyboardFunc
@@ -151,49 +151,42 @@ class PinKeyboard extends Component {
         [null, null, null],
         [null, null, null],
         [null, 0, () => this.props.keyDown("back")]
-      ];
+      ]
 
     // Decide if the element passed as the key is text
     const keyJsx = keyboardFuncSet[row][column] ? (
       <Image style={[keyImageDefaultStyle, keyImageStyle]} source={entity} />
     ) : (
       <Text style={[keyTextDefaultStyle, keyTextStyle]}>{entity}</Text>
-    );
+    )
 
     // We want to block keyboard interactions if it has been disabled.
     if (!disabled) {
-      const KeyComponent = disableRippleEffect ? TouchableOpacity : Ripple;
-      const keyProps = {
-        [disableRippleEffect ? 'onPress' : 'onPressIn'] : () =>
+      // Always use Pressable; use android_ripple when ripple is enabled
+      const onPress = () =>
         keyboardFuncSet[row][column]
           ? keyboardFuncSet[row][column]()
           : keyDown(entity)
-      }
+
       return (
-        <KeyComponent
-          rippleColor={"#000"}
+        <Pressable
           key={column}
-          {...keyProps}
-          style={[keyContainerStyle, keyDefaultStyle, keyStyle]}
+          onPress={onPress}
+          android_ripple={!disableRippleEffect ? { color: "#000" } : undefined}
+          style={
+            ({ pressed }) => [
+              keyContainerStyle,
+              keyDefaultStyle,
+              keyStyle,
+              pressed && !disableRippleEffect
+                ? { opacity: 0.6 }
+                : null,
+            ]
+          }
         >
           {keyJsx}
-        </KeyComponent>
-      );
-    } else {
-      return (
-        <View
-          key={column}
-          style={[
-            keyContainerStyle,
-            keyDefaultStyle,
-            keyStyle,
-            keyboardDisabledDefaultStyle,
-            keyboardDisabledStyle
-          ]}
-        >
-          {keyJsx}
-        </View>
-      );
+        </Pressable >
+      )
     }
   }
 
@@ -205,14 +198,14 @@ class PinKeyboard extends Component {
   throwError(error) {
     this.setState({
       error
-    });
+    })
   }
 
   /**
    * Function used to clear the error on the keyboard
    */
   clearError() {
-    this.setState({ error: null });
+    this.setState({ error: null })
   }
 
   /**
@@ -221,7 +214,7 @@ class PinKeyboard extends Component {
   disable() {
     this.setState({
       disabled: true
-    });
+    })
   }
 
   /**
@@ -230,7 +223,7 @@ class PinKeyboard extends Component {
   enable() {
     this.setState({
       disabled: false
-    });
+    })
   }
 }
 
@@ -248,7 +241,7 @@ PinKeyboard.propTypes = {
   errorStyle: PropTypes.object,
   errorTextStyle: PropTypes.object,
   disableRippleEffect: PropTypes.bool
-};
+}
 
 PinKeyboard.defaultProps = {
   // Keyboard configuration. The default contains a key
@@ -259,7 +252,7 @@ PinKeyboard.defaultProps = {
   // Use this array to set custom functions for certain keys.
   keyboardFunc: null,
   keyboardErrorDisplayTime: 3000
-};
+}
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -328,6 +321,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold"
   }
-});
+})
 
-export default PinKeyboard;
+export default PinKeyboard
