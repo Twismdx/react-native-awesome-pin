@@ -3,7 +3,7 @@
  * @description Customisable full screen pin component
  */
 
-import React, { Component } from "react";
+import React, { Component } from "react"
 import {
   View,
   Image,
@@ -11,11 +11,11 @@ import {
   StyleSheet,
   Vibration,
   SafeAreaView
-} from "react-native";
-import PropTypes from "prop-types";
+} from "react-native"
+import PropTypes from "prop-types"
 
-import PinInput from "./PinInput";
-import PinKeyboard from "./PinKeyboard";
+import PinInput from "./PinInput"
+import PinKeyboard from "./PinKeyboard"
 
 class PinScreen extends Component {
   /**
@@ -27,11 +27,11 @@ class PinScreen extends Component {
    *
    */
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       pin: ""
-    };
+    }
   }
 
   /**
@@ -40,7 +40,7 @@ class PinScreen extends Component {
    * Executed when the component is mounted to the screen.
    */
   componentDidMount() {
-    this.props.onRef(this);
+    this.props.onRef(this)
   }
 
   /**
@@ -49,7 +49,7 @@ class PinScreen extends Component {
    * Executed when the component is unmounted from the screen
    */
   componentWillUnmount() {
-    this.props.onRef(undefined);
+    this.props.onRef(undefined)
   }
 
   /**
@@ -58,15 +58,15 @@ class PinScreen extends Component {
    * Allows us to render JSX to the screen
    */
   componentDidUpdate(prevProps) {
-    const { pin } = this.props;
+    const { pin } = this.props
 
     if (pin !== prevProps.pin) {
       // We want to filter the pin so it always is a string
-      const filteredPin = pin ? pin.toString() : "";
+      const filteredPin = pin ? pin.toString() : ""
 
       this.setState({
         pin: filteredPin
-      });
+      })
     }
   }
 
@@ -102,17 +102,20 @@ class PinScreen extends Component {
       errorStyle,
       errorTextStyle,
       keyboard,
-      disableRippleEffect
-    } = this.props;
+      disableRippleEffect,
+      keyboardFunc,
+      renderKey,
+      copy,
+    } = this.props
     /** State */
-    const { pin } = this.state;
+    const { pin } = this.state
     /** Style */
     const {
       containerDefaultStyle,
       defaultTaglineStyle,
       safeAreaViewHeaderDefaultStyle,
       safeAreaViewFooterDefaultStyle
-    } = styles;
+    } = styles
 
     return (
       <View style={[containerDefaultStyle, containerStyle]}>
@@ -123,7 +126,7 @@ class PinScreen extends Component {
           ]}
         >
           {logoEnabled ?
-            <Image style={[{ flex: 2 }, logoStyle]} source={logo} /> : null }
+            <Image style={[{ flex: 2 }, logoStyle]} source={logo} /> : null}
           <Text style={[defaultTaglineStyle, taglineStyle]}>{tagline}</Text>
           <PinInput
             onRef={ref => (this.pins = ref)}
@@ -153,13 +156,15 @@ class PinScreen extends Component {
             keyImageStyle={keyImageStyle}
             errorStyle={errorStyle}
             errorTextStyle={errorTextStyle}
-            keyboard={keyboard}
+            keyboard={this.props.keyboard}
+            keyboardFunc={this.props.keyboardFunc}
+            renderKey={this.props.renderKey}
             disableRippleEffect={disableRippleEffect}
           />
           {this.props.ItemFooter}
         </SafeAreaView>
       </View>
-    );
+    )
   }
 
   /**
@@ -169,37 +174,37 @@ class PinScreen extends Component {
    */
   keyDown(key) {
     /** Props */
-    const { numberOfPins, keyDown } = this.props;
+    const { numberOfPins, keyDown } = this.props
     /** State */
-    const { pin } = this.state;
+    const { pin } = this.state
 
     // An instance of the pin
-    let newPin = pin;
+    let newPin = pin
 
     // Check if key is the back buttons. The 'back' value is
     // defined in the array keyboardFunc passed to keyboard as
     // a parameter.
     if (key === "back") {
-      newPin = pin.substring(0, pin.length - 1);
-      this.setState({pin: newPin});
+      newPin = pin.substring(0, pin.length - 1)
+      this.setState({ pin: newPin })
     } else {
       // Concat the letter in the string
       if (pin.length < numberOfPins) {
-        newPin = pin.concat(key);
-        this.setState({pin: newPin});
+        newPin = pin.concat(key)
+        this.setState({ pin: newPin })
       }
     }
 
     // If vibration is enabled then we vibrate on each key press
     // to provide tactile feedback to the user.
     if (this.props.keyVibration) {
-      Vibration.vibrate(50);
+      Vibration.vibrate(50)
     }
 
     // The pin has been changed, trigger the callback
     // Don't allow the callback if the input exceeds the number of pins
     if (newPin.length <= numberOfPins) {
-      if (keyDown) keyDown(newPin);
+      if (keyDown) keyDown(newPin)
     }
   }
 
@@ -210,29 +215,29 @@ class PinScreen extends Component {
    */
   throwError(error) {
     // Shake the pins
-    this.pins.shake();
+    this.pins.shake()
 
     // throw error on the keyboard
-    this.keyboard.throwError(error);
+    this.keyboard.throwError(error)
 
     // Disable the keyboard
-    this.keyboard.disable();
+    this.keyboard.disable()
   }
 
   /**
    * Function used to clear the error on the pin screen
    */
   clearError() {
-    this.keyboard.clearError();
+    this.keyboard.clearError()
   }
 
   /**
    * Callback when shake animation has completed on the pin
    */
   shakeAnimationComplete() {
-    if (this.props.onError) this.props.onError();
+    if (this.props.onError) this.props.onError()
 
-    this.keyboard.enable();
+    this.keyboard.enable()
   }
 }
 
@@ -247,11 +252,14 @@ PinScreen.propTypes = {
   keyVibration: PropTypes.bool,
   shakeVibration: PropTypes.bool,
   logoEnabled: PropTypes.bool,
+  keyboardFunc: PropTypes.array,
   headerBackgroundColor: PropTypes.string,
+  renderKey: PropTypes.func,
   footerBackgroundColor: PropTypes.string,
   ItemFooter: PropTypes.element,
   keyboard: PropTypes.array,
   disableRippleEffect: PropTypes.bool,
+  copy: PropTypes.string,
 
   // Style props
   containerStyle: PropTypes.object,
@@ -271,22 +279,26 @@ PinScreen.propTypes = {
   keyImageStyle: PropTypes.object,
   errorStyle: PropTypes.object,
   errorTextStyle: PropTypes.object
-};
+}
 
 PinScreen.defaultProps = {
   // Text above the pins acting as a indicator
   tagline: "Enter your PIN",
   // Number of pins to create
-  numberOfPins: 5,
+  numberOfPins: 6,
+  keyboardFunc: null,
+  keyboard: [[1, 2, 3], [4, 5, 6], [7, 8, 9], [null, 0, require("./back.png")]],
+  renderKey: null,
+  copy: null,
   // Is vibration enabled or disabled
   keyVibration: true,
   shakeVibration: true,
   logoEnabled: false,
   headerBackgroundColor: "#e2e2e2",
   footerBackgroundColor: "#fff"
-};
+}
 
-export default PinScreen;
+export default PinScreen
 
 /** -------------------------------------------- */
 /**             Component Styling                */
@@ -316,4 +328,4 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold"
   }
-});
+})

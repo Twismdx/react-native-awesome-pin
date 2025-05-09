@@ -121,6 +121,9 @@ class PinKeyboard extends Component {
    * @return {jsx}
    */
   renderKey(entity, row, column) {
+    if (typeof this.props.renderKey === "function") {
+      return this.props.renderKey(entity, row, column)
+    }
     /** Styles */
     const {
       keyContainerStyle,
